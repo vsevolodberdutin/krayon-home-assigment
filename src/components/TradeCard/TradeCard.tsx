@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-import { Box, Stack, Typography, styled } from "@mui/material";
+import { Box, Stack, styled } from "@mui/material";
 import {
   SubmitButton,
   CrossButton,

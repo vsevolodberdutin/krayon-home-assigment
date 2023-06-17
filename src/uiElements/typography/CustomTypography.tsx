@@ -23,16 +23,17 @@ interface textProps {
   text: string;
   style?: any;
   className?: any;
+  id?: any;
 }
 
 export const Header = ({ text }: textProps) => {
   return <StyledHeader>{text}</StyledHeader>;
 };
-export const SubHeader = ({ text, style, className }: textProps) => {
-  return <StyledSubHeader className={className} style={style}>{text}</StyledSubHeader>;
+export const SubHeader = ({ text, style, className, id }: textProps) => {
+  return <StyledSubHeader className={className} id={id} style={style}>{text}</StyledSubHeader>;
 };
-export const AmountBlue = ({ text }: textProps) => {
-  return <StyledAmountBlue>{text}</StyledAmountBlue>;
+export const AmountBlue = ({ text, className, id }: textProps) => {
+  return <StyledAmountBlue id={id}>{text}</StyledAmountBlue>;
 };
 export const InputName = ({ text }: textProps) => {
   return <StyledInputName>{text}</StyledInputName>;

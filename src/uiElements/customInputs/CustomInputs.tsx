@@ -64,13 +64,17 @@ const StyledDivider = styled(Box)({
   marginInline: "10px",
 });
 
-const StyledCheckButton = styled(Box)({
+const StyledCheckButton = styled("div")({
   margin: "0 -10px",
   color: "#2980ff",
 });
 
 interface SelectProps {
   onChangeFormData: any;
+}
+interface ChosenEventProps {
+  [x: string]: any;
+  preventDefault: () => void;
 }
 
 export const WalletSelect: React.FC<SelectProps> = ({ onChangeFormData }) => {
@@ -84,21 +88,16 @@ export const WalletSelect: React.FC<SelectProps> = ({ onChangeFormData }) => {
 
   useEffect(() => {
     onChangeFormData(inputValue);
-    // console.log("update", inputValue);
   }, [inputValue]);
 
   const handleOnClick = () => {
     setIsOpen(!isOpen);
   };
 
-  const handleChosenOnClick = (event: {
-    [x: string]: any;
-    preventDefault: () => void;
-  }) => {
+  const handleChosenOnClick = (event: ChosenEventProps) => {
     event.preventDefault();
-    const chosenItem = wallets.filter(
-      (item) => event?.target.id === item?.id
-    )[0];
+    console.log("event", event);
+    const chosenItem = wallets.filter((item) => event.target.id === item.id)[0];
     setInputValue(chosenItem);
     setIsOpen(false);
   };
@@ -122,17 +121,17 @@ export const WalletSelect: React.FC<SelectProps> = ({ onChangeFormData }) => {
           {wallets.map((item) => (
             <ItemMenuWrapper
               key={item?.id}
-              id={item?.id}
+              id={item.id}
               onClick={handleChosenOnClick}
             >
               <MainInfoWrapper>
-                <SubHeader text={item?.name} />
+                <SubHeader text={item?.name} id={item.id} />
                 <StyledDivider />
-                <AmountBlue text={`$${item?.total_usd_balance}`} />
+                <AmountBlue text={`$${item?.total_usd_balance}`} id={item.id} />
               </MainInfoWrapper>
               {inputValue.name === item?.name && (
                 <StyledCheckButton>
-                  <CheckCircleOutlineIcon />
+                  <CheckCircleOutlineIcon id={item.id} />
                 </StyledCheckButton>
               )}
             </ItemMenuWrapper>
