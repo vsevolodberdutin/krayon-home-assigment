@@ -116,12 +116,6 @@ export const PayCoin: React.FC<PayInputProps> = ({
   pay_coin_amount,
 }) => {
   const activeCoin = wallet_assets[0];
-  // const activeCoin = wallet_assets.filter(
-  //   (item: any) => pay_coin_id === item.id
-  // );
-  console.log("activeCoin", activeCoin);
-  // console.log("wallet_assets", wallet_assets);
-  // console.log("pay_coin_id", pay_coin_id);
   const [isOpen, setIsOpen] = useState(false);
 
   const [payId, setPayId] = useState<string>(wallet_assets[0].id);
@@ -139,12 +133,11 @@ export const PayCoin: React.FC<PayInputProps> = ({
 
   useEffect(() => {
     onChange({ payId, payAmount });
-    console.log("update", { payId, payAmount });
   }, [payId, payAmount]);
 
   useEffect(() => {
     setInputValue(initiateItem);
-    setPayAmount('');
+    setPayAmount("");
   }, [activeCoin]);
 
   const handleOnClick = () => {
@@ -223,12 +216,31 @@ export const PayCoin: React.FC<PayInputProps> = ({
   );
 };
 
+//
+//
+//
+// RECEIVE COMPONENT
+//
 interface ReceiveInputProps {
-  onChange?: any;
+  receive_coin_id: string;
+  onChange: any;
+  pay_coin_id: string;
+  pay_coin_amount: string;
+}
+interface ReceiveChosenProps {
+  [x: string]: any;
+  preventDefault: () => void;
 }
 
-export const ReceiveCoin: React.FC<ReceiveInputProps> = () => {
+export const ReceiveCoin: React.FC<ReceiveInputProps> = ({
+  receive_coin_id,
+  pay_coin_id,
+  pay_coin_amount,
+  onChange,
+}) => {
   const prices = dataPrices.prices;
+
+  const [receiveId, setReceiveId] = useState<string>(receive_coin_id);
 
   const [isOpen, setIsOpen] = useState(false);
   const [inputValue, setInputValue] = useState({
@@ -237,32 +249,30 @@ export const ReceiveCoin: React.FC<ReceiveInputProps> = () => {
   });
   const [value, setValue] = useState<string>("");
 
+  useEffect(() => {
+    onChange({receiveId});
+
+    const chosenItem = prices.filter((item) => item.id === receive_coin_id);
+    const actualMarketValue = chosenItem[0].price ? parseFloat(chosenItem[0].price.replace(",", "")) : 0;
+    const payAmountNum = pay_coin_amount ? parseFloat(pay_coin_amount.replace(",", "")) : 0;
+    const resultPrice = actualMarketValue * payAmountNum ;
+    setValue(resultPrice.toString());
+
+  }, [inputValue, receiveId, receive_coin_id, pay_coin_amount]);
+
   const handleOnClick = () => {
     setIsOpen(!isOpen);
   };
 
-  const handleChosenOnClick = (event: {
-    [x: string]: any;
-    preventDefault: () => void;
-  }) => {
+  const handleChosenOnClick = (event: ReceiveChosenProps) => {
     event.preventDefault();
     const chosenItem = prices.filter(
       (item) => event.target.innerText === item.symbol
     )[0];
+
     setInputValue(chosenItem);
+    setReceiveId(chosenItem.id);
     setIsOpen(false);
-    setValue("");
-  };
-
-  // const handleSubmit = (event: { preventDefault: () => void }) => {
-  //   event.preventDefault();
-  //   const formDataAsJson = JSON.stringify(inputValue);
-  //   console.log(formDataAsJson);
-  // };
-
-  const handleAmountChange = (event: { target: { value: string } }) => {
-    const newValue = event.target.value;
-    setValue(newValue);
   };
 
   return (
@@ -283,7 +293,6 @@ export const ReceiveCoin: React.FC<ReceiveInputProps> = () => {
           value={value}
           placeholder="0"
           variant="standard"
-          onChange={handleAmountChange}
         />
       </FooterSelectWrapper>
       {isOpen && (

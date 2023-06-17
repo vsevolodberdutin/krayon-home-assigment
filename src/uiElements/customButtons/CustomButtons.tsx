@@ -86,10 +86,10 @@ export const MaxButton: React.FC<ButtonProps> = ({ onClick }) => {
     </StyledMaxButton>
   );
 };
-export const CrossButton: React.FC<ButtonProps> = () => {
+export const CrossButton: React.FC<ButtonProps> = ({ onClick }) => {
   return (
     <CrossButtonWrapper>
-      <StyledCrossButton>
+      <StyledCrossButton onClick={onClick} >
         <CloseIcon style={{ width: "30px", height: "30px" }} />
       </StyledCrossButton>
     </CrossButtonWrapper>
