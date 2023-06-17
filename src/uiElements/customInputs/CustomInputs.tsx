@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { styled } from "@mui/material/styles";
 import { Box, Stack } from "@mui/material";
@@ -70,16 +70,22 @@ const StyledCheckButton = styled(Box)({
 });
 
 interface SelectProps {
-  onChange: any;
+  onChangeFormData: any;
 }
 
-export const WalletSelect: React.FC<SelectProps> = ({ onChange }) => {
+export const WalletSelect: React.FC<SelectProps> = ({ onChangeFormData }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [inputValue, setInputValue] = useState({
+    id: wallets[0].id,
     name: wallets[0].name,
     imageName: wallets[0].imageName,
     total_usd_balance: wallets[0].total_usd_balance,
   });
+
+  useEffect(() => {
+    onChangeFormData(inputValue);
+    // console.log("update", inputValue);
+  }, [inputValue]);
 
   const handleOnClick = () => {
     setIsOpen(!isOpen);
@@ -91,7 +97,7 @@ export const WalletSelect: React.FC<SelectProps> = ({ onChange }) => {
   }) => {
     event.preventDefault();
     const chosenItem = wallets.filter(
-      (item) => event?.target.id === item.id
+      (item) => event?.target.id === item?.id
     )[0];
     setInputValue(chosenItem);
     setIsOpen(false);
@@ -104,10 +110,10 @@ export const WalletSelect: React.FC<SelectProps> = ({ onChange }) => {
       </InputNameWrapper>
       <InputWrapper>
         <MainInfoWrapper>
-          <IconsLoader iconName={inputValue.imageName} />
-          <SubHeader text={inputValue.name} />
+          <IconsLoader iconName={inputValue?.imageName} />
+          <SubHeader text={inputValue?.name} />
           <StyledDivider />
-          <AmountBlue text={`$${inputValue.total_usd_balance}`} />
+          <AmountBlue text={`$${inputValue?.total_usd_balance}`} />
         </MainInfoWrapper>
         <ArrowButtons isActive={!isOpen} onClick={handleOnClick} />
       </InputWrapper>
@@ -115,16 +121,16 @@ export const WalletSelect: React.FC<SelectProps> = ({ onChange }) => {
         <StyledMenuWrapper>
           {wallets.map((item) => (
             <ItemMenuWrapper
-              key={item.id}
-              id={item.id}
+              key={item?.id}
+              id={item?.id}
               onClick={handleChosenOnClick}
             >
               <MainInfoWrapper>
-                <SubHeader text={item.name} />
+                <SubHeader text={item?.name} />
                 <StyledDivider />
-                <AmountBlue text={`$${item.total_usd_balance}`} />
+                <AmountBlue text={`$${item?.total_usd_balance}`} />
               </MainInfoWrapper>
-              {inputValue.name === item.name && (
+              {inputValue.name === item?.name && (
                 <StyledCheckButton>
                   <CheckCircleOutlineIcon />
                 </StyledCheckButton>

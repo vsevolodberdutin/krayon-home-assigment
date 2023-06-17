@@ -22,13 +22,14 @@ const StyledInputName = styled(StyledHeader)({
 interface textProps {
   text: string;
   style?: any;
+  className?: any;
 }
 
 export const Header = ({ text }: textProps) => {
   return <StyledHeader>{text}</StyledHeader>;
 };
-export const SubHeader = ({ text, style }: textProps) => {
-  return <StyledSubHeader style={style}>{text}</StyledSubHeader>;
+export const SubHeader = ({ text, style, className }: textProps) => {
+  return <StyledSubHeader className={className} style={style}>{text}</StyledSubHeader>;
 };
 export const AmountBlue = ({ text }: textProps) => {
   return <StyledAmountBlue>{text}</StyledAmountBlue>;

@@ -1,8 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { styled } from "@mui/material/styles";
 import { Box, Stack, TextField } from "@mui/material";
-import dataWallets from "../../data/wallets.json";
 import dataPrices from "../../data/prices.json";
 
 import { ArrowButtons, MaxButton } from "../customButtons/CustomButtons";
@@ -91,50 +90,86 @@ const StyledInput = styled(TextField)`
   }
 `;
 
-interface ButtonProps {
-  name?: string;
+interface PayInputProps {
+  wallet_assets: any;
+  onChange: any;
+  pay_coin_id: string;
+  pay_coin_amount: string;
+}
+interface AssetsItemProps {
+  id: string;
+  logo: string;
+  symbol: string;
+  balance: string;
 }
 
-export const PayCoin: React.FC<ButtonProps> = () => {
-  const coins = dataWallets.wallets[0].assets;
+interface ChosenItemProps {
+  [x: string]: any;
+  symbol: any;
+}
 
+// component
+export const PayCoin: React.FC<PayInputProps> = ({
+  wallet_assets,
+  onChange,
+  pay_coin_id,
+  pay_coin_amount,
+}) => {
+  const activeCoin = wallet_assets[0];
+  // const activeCoin = wallet_assets.filter(
+  //   (item: any) => pay_coin_id === item.id
+  // );
+  console.log("activeCoin", activeCoin);
+  // console.log("wallet_assets", wallet_assets);
+  // console.log("pay_coin_id", pay_coin_id);
   const [isOpen, setIsOpen] = useState(false);
-  const [inputValue, setInputValue] = useState({
-    symbol: coins[0].symbol,
-    balance: coins[0].balance,
-    logo: coins[0].logo,
-  });
-  const [value, setValue] = useState<string>("");
+
+  const [payId, setPayId] = useState<string>(wallet_assets[0].id);
+  const [payAmount, setPayAmount] = useState<string>(pay_coin_amount);
+
+  const initiateItem = {
+    pay_coin_id: pay_coin_id,
+    pay_coin_amount: payAmount,
+    symbol: activeCoin.symbol,
+    balance: activeCoin.balance,
+    logo: activeCoin.logo,
+  };
+
+  const [inputValue, setInputValue] = useState(initiateItem);
+
+  useEffect(() => {
+    onChange({ payId, payAmount });
+    console.log("update", { payId, payAmount });
+  }, [payId, payAmount]);
+
+  useEffect(() => {
+    setInputValue(initiateItem);
+    setPayAmount('');
+  }, [activeCoin]);
 
   const handleOnClick = () => {
     setIsOpen(!isOpen);
   };
   const handleMaxOnClick = () => {
-    setValue(inputValue.balance);
+    setPayAmount(inputValue.balance);
   };
 
-  const handleChosenOnClick = (event: {
-    [x: string]: any;
-    preventDefault: () => void;
-  }) => {
+  const handleChosenOnClick = (event: any) => {
     event.preventDefault();
-    const chosenItem = coins.filter((item) =>
-      event.target.innerText.includes(item.symbol)
+
+    const chosenItem = wallet_assets.filter((item: ChosenItemProps) =>
+      event.target.className.includes(item.id)
     )[0];
     setInputValue(chosenItem);
+    setPayId(chosenItem.id);
     setIsOpen(false);
-    setValue("");
+    setPayAmount("");
+    onChange({ payId, payAmount });
   };
-
-  // const handleSubmit = (event: { preventDefault: () => void }) => {
-  //   event.preventDefault();
-  //   const formDataAsJson = JSON.stringify(inputValue);
-  //   console.log(formDataAsJson);
-  // };
 
   const handleChange = (event: { target: { value: string } }) => {
     const newValue = event.target.value;
-    setValue(newValue);
+    setPayAmount(newValue);
   };
 
   return (
@@ -152,7 +187,7 @@ export const PayCoin: React.FC<ButtonProps> = () => {
       <FooterSelectWrapper>
         <StyledInput
           type="number"
-          value={value}
+          value={payAmount}
           placeholder="0"
           variant="standard"
           onChange={handleChange}
@@ -161,20 +196,25 @@ export const PayCoin: React.FC<ButtonProps> = () => {
       </FooterSelectWrapper>
       {isOpen && (
         <StyledMenuWrapper>
-          {coins.map((item) => (
+          {wallet_assets.map((item: AssetsItemProps) => (
             <ItemMenuWrapper
               key={item.id}
-              id={item.id}
+              className={item.id}
               onClick={handleChosenOnClick}
             >
               <MainInfoWrapper>
                 <StyledImg
+                  className={item.id}
                   src={item.logo}
                   style={{ width: "16px", height: "16px" }}
                 />
-                <SubHeader text={item.symbol} />
+                <SubHeader className={item.id} text={item.symbol} />
               </MainInfoWrapper>
-              <SubHeader text={item.balance} style={{ fontSize: "12px" }} />
+              <SubHeader
+                className={item.id}
+                text={item.balance}
+                style={{ fontSize: "12px" }}
+              />
             </ItemMenuWrapper>
           ))}
         </StyledMenuWrapper>
@@ -183,7 +223,11 @@ export const PayCoin: React.FC<ButtonProps> = () => {
   );
 };
 
-export const ReceiveCoin: React.FC<ButtonProps> = () => {
+interface ReceiveInputProps {
+  onChange?: any;
+}
+
+export const ReceiveCoin: React.FC<ReceiveInputProps> = () => {
   const prices = dataPrices.prices;
 
   const [isOpen, setIsOpen] = useState(false);

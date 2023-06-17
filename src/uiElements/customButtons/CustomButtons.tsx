@@ -15,6 +15,7 @@ const StyledSubmitButton = styled(Button)({
   backgroundColor: "#2980ff",
   padding: "13px 26px",
   width: "fit-content",
+  cursor: "pointer",
   ":hover": {
     backgroundColor: "#5c9dff",
   },
@@ -54,11 +55,28 @@ const StyledSwapButton = styled(IconButton)({});
 interface ButtonProps {
   name?: string;
   isActive?: boolean;
-  onClick?: () => void;
+  onClick?: any;
+  disabled?: boolean;
 }
 
-export const SubmitButton: React.FC<ButtonProps> = ({ name }) => {
-  return <StyledSubmitButton type="submit">{name}</StyledSubmitButton>;
+export const SubmitButton: React.FC<ButtonProps> = ({
+  name,
+  onClick,
+  disabled,
+}) => {
+  return (
+    <>
+      {disabled ? (
+        <StyledSubmitButton type="submit" disabled={disabled} style={{backgroundColor:'lightgray'}}>
+          {name}
+        </StyledSubmitButton>
+      ) : (
+        <StyledSubmitButton type="submit" onClick={onClick} >
+          {name}
+        </StyledSubmitButton>
+      )}
+    </>
+  );
 };
 
 export const MaxButton: React.FC<ButtonProps> = ({ onClick }) => {
